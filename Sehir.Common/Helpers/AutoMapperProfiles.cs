@@ -17,7 +17,7 @@ namespace Sehir.Common.Helpers
             {
 
                 opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url);
-
+                
             });
         }
 
