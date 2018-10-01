@@ -24,5 +24,16 @@ namespace Sehir.Core.Services
             }
         }
 
+
+        public static IAuthRepository AuthRepository
+        {
+            get
+            {
+                return ServiceIoc.Container.Resolve<IAuthRepository>();
+
+            }
+        }
+
+
     }
 }
