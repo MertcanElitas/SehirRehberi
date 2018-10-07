@@ -17,10 +17,7 @@ namespace SehirRehberi.Helper
         }
 
 
-        public void Deneme()
-        {
-
-        }
+     
 
     }
 }
