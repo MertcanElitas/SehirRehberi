@@ -87,12 +87,20 @@ namespace Sehir.Core.Infrastructure.Repository.EntityFramework
 
         public PhotoDto GetPhoto(int id)
         {
-            var model = UnitOfWork.SehirContext.Photo.Include(a=>a.City).Select(x=>new PhotoDto {
+            var model = UnitOfWork.SehirContext.Photo.Include(a => a.City).Select(x => new PhotoDto {
 
-                CreatedDate=x.CreatedDate,
-                IsDeleted=x.IsDeleted,
-                CityId=x.CityId,
-                IsMain=x.IsMain,
+                CreatedDate = x.CreatedDate,
+                IsDeleted = x.IsDeleted,
+                CityId = x.CityId,
+                City = new CityDto
+                {
+                    Description = x.City.Description,
+                    IsDeleted = x.City.IsDeleted,
+                    CreatedDate = x.City.CreatedDate,
+                    Name = x.City.Name,
+                    UserId = x.City.userId
+                },
+                IsMain =x.IsMain,
                 Url=x.Url,
                 
 

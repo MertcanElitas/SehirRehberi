@@ -35,5 +35,13 @@ namespace Sehir.Core.Services
         }
 
 
+        public static IPhotoService PhotoService
+        {
+            get
+            {
+                return ServiceIoc.Container.Resolve<IPhotoService>();
+            }
+        }
+
     }
 }

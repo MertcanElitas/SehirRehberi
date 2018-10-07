@@ -18,7 +18,7 @@ namespace Sehir.Core.Infrastructure.Repository
         List<PhotoDto> GetPhotosByCity(int id);
         CityDto GetById(int cityid);
         PhotoDto GetPhoto(int id);
-
+        
 
     }
 }

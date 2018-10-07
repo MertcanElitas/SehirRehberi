@@ -23,6 +23,7 @@ using Sehir.Core.Infrastructure.Repository.EntityFramework;
 using Sehir.Core.Services;
 using Sehir.Core.Services.Interfaces;
 using Sehir.Domain.Data;
+using SehirRehberi.Helper;
 
 namespace SehirRehberi
 {
@@ -42,8 +43,10 @@ namespace SehirRehberi
             services.AddDbContext<SehirContext>(x => x.UseSqlServer("Server=DESKTOP-FI9UVEQ\\MERTCAN;Database=Sehir;Trusted_Connection=True"));
             services.AddHttpContextAccessor();
             services.AddAutoMapper();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddScoped<IValueService, ValueService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IPhotoService, PhotoRepository>();
             services.AddScoped<IEntityRepository, EntityRepositoryBase>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=>
             {

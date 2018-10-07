@@ -34,7 +34,9 @@ namespace Sehir.Common.Helpers
 
         public static T GetService<T>()
         {
+             
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
+
         }
 
 

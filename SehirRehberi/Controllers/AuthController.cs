@@ -20,7 +20,7 @@ namespace SehirRehberi.Controllers
     {
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody]RegisterDto registerDto)
+        public async Task<ActionResult> Register(RegisterDto registerDto)
         {
             if (await Services.AuthRepository.UserExist(registerDto.Username))
             {
@@ -36,15 +36,14 @@ namespace SehirRehberi.Controllers
 
 
            var registeruser= Services.AuthRepository.Register(registerDto);
-            return StatusCode(201,registeruser);
+            return StatusCode(201);
         }
-
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody]RegisterDto registerDto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest();
-            }
+          
 
            var x=Services.AuthRepository.Login(registerDto.Username, registerDto.Password);
 
@@ -55,7 +54,7 @@ namespace SehirRehberi.Controllers
 
             var tokenHandler = new JwtSecurityTokenHandler();//Token işlemini yapıcak tokenla ugraşacak olan .net sınıfı;
 
-            var key =Encoding.ASCII.GetBytes(HttpHelper._configuration.GetSection("AppSettings:Token").Value);//AppSettings deki key değerini okuduk.
+            var key = Encoding.ASCII.GetBytes(HttpHelper._configuration.GetSection("AppSettings:Token").Value);//AppSettings deki key değerini okuduk.
 
             //Token içerisine Konulucak nesneneler
 
@@ -64,16 +63,17 @@ namespace SehirRehberi.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier,x.Id.ToString()),
-                    //new Claim(ClaimTypes.Name,x.Username)
+                    //new Claim(ClaimTypes.Name,x.Username),
                 }),
                 Expires = DateTime.Now.AddDays(1),
-                SigningCredentials=new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.EcdsaSha512Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
             };
 
             var token = tokenHandler.CreateToken(tokendescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-;
-            return Ok(x);
+            ;
+            return Ok(tokenString);
+
 
         }
 

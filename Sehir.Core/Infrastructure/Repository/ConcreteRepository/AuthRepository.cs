@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Sehir.Common.Dto;
 using Sehir.Core.Infrastructure.Uow;
 using Sehir.Domain.Domains;
@@ -10,10 +12,39 @@ namespace Sehir.Core.Infrastructure.Repository.ConcreteRepository
 {
     public class AuthRepository : IAuthRepository
     {
-        public Task<User> Login(string Username, string password)
+        public async Task<User> Login(string Username, string password)
         {
 
-            throw new NotImplementedException();
+            var user = await UnitOfWork.SehirContext.User.FirstOrDefaultAsync(x => x.Username == Username);
+
+            if (user == null)
+                return null;
+
+            if (!VerifyPasswordHash(password,user.PasswordHash,user.Passwordsalt))
+            {
+                return null;
+            }
+            return user;
+        }
+
+
+
+        public bool VerifyPasswordHash(string password,byte[] passwordhash,byte[] passwordsalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordsalt))
+            {
+                var computedhash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                for (int i = 0; i < computedhash.Length; i++)
+                {
+                    if (computedhash[i] != passwordhash[i])
+                    {
+                        return false;
+                    }
+                   
+                }
+                return true;
+            }
         }
 
         public async Task<User> Register(RegisterDto user)
@@ -39,9 +70,15 @@ namespace Sehir.Core.Infrastructure.Repository.ConcreteRepository
             return newuser;
         }
 
-        public Task<bool> UserExist(string userName)
+        public async Task<bool> UserExist(string userName)
         {
-            throw new NotImplementedException();
+            var model =await UnitOfWork.SehirContext.User.FirstOrDefaultAsync(x => x.Username == userName);
+
+            if (model!=null)
+            {
+                return true;
+            }
+            return false;
         }
 
 
@@ -49,8 +86,8 @@ namespace Sehir.Core.Infrastructure.Repository.ConcreteRepository
         {
             using (var hmac=new System.Security.Cryptography.HMACSHA512())
             {
-                passwordHash = hmac.Key;
-                passwordSalt = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
 
